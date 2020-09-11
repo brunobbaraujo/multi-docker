@@ -1,0 +1,25 @@
+sudo: required
+language: generic
+services:
+    - docker
+
+before_install:
+    - docker build -t brunobento/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+    - docker run -e CI=true brunobento/react-test npm run test
+
+after_success:
+    - docker build -t brunobento/multi-client ./client
+    - docker build -t brunobento/multi-nginx  ./nginx
+    - docker build -t brunobento/multi-server ./server
+    - docker build -t brunobento/multi-worker ./worker
+    
+    # Log in to docker cli
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    
+    # Push images to docker hub
+    - docker push brunobento/multi-client
+    - docker push brunobento/multi-nginx
+    - docker push brunobento/multi-server 
+    - docker push brunobento/multi-worker

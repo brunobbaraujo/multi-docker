@@ -23,3 +23,15 @@ after_success:
     - docker push brunobento/multi-nginx
     - docker push brunobento/multi-server 
     - docker push brunobento/multi-worker
+
+deploy:
+    provider: elasticbeanstalk
+    region: "sa-east-1"
+    app: "multi-docker"
+    env: "MultiDocker-env"
+    bucket_name: "elasticbeanstalk-sa-east-1-843318225610"
+    bucket_path: "docker-multi"
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
